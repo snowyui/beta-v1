@@ -1,0 +1,22 @@
+{
+  // "include": ["./dist"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "jsx": "react-jsx", // require, tsx compile
+    "allowSyntheticDefaultImports": true // require
+  },
+  "ts-node": {
+    // require
+    "esm": true,
+    "compilerOptions": {
+      "outDir": "./dist",
+      // require
+      "module": "nodenext",
+      // "baseUrl": "../../../"
+      "baseUrl": ".",
+      "paths": {
+        "src/*": ["src/*"]
+      }
+    }
+  }
+}
