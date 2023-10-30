@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "dom"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "inscope": ["./core/src/index.ts"],
+      "inscope/_internal": ["./_internal/src/index.ts"],
+      "inscope/compiler": ["./compiler/src/index.ts"]
+    }
+  },
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "nodenext"
+    }
+  },
+
+  "exclude": ["./**/dist"]
+}
