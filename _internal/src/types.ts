@@ -1,5 +1,3 @@
-import type { CSSProperties } from 'react'
-
 export type ReturnType = Record<string, string>
 
 export type StyleType = {
@@ -9,6 +7,7 @@ export type StyleType = {
 export type ReturnStyleType<T> = { [key in keyof T]: string }
 export type ProxyClassName = { any: string | [key: string] }
 
+type CSSProperties = React.CSSProperties
 export interface PropertyType extends CSSProperties {
   link?: CSSProperties
   visited?: CSSProperties
