@@ -1,11 +1,15 @@
-import path from 'path';
+import path from 'path'
 
-export const isUnderDevelopment = process.env.NODE_ENV !== 'development';
+export const isUnderDevelopment = process.env.NODE_ENV !== 'development'
 
 const dir = (direname: string, relativePath: string) => {
-  return path.join(direname, relativePath);
-};
+  return path.join(direname, relativePath)
+}
 
 export const get = {
-  dir,
-};
+  dir
+}
+
+export const camelToKebabCase = (property: string) => {
+  return property.replace(/([A-Z])/g, '-$1').toLowerCase()
+}
