@@ -1,32 +1,25 @@
-import { genBase62Hash, pseudo, isUnderDevelopment } from '..'
-
-import type { PropertyType, StyleType, ReturnType } from '..'
+import { genBase62Hash, pseudo, isUnderDevelopment, camelToKebabCase } from '..'
+import type { CustomCSSProperties, SerializeType, ClassesObjectType } from '..'
 
 let isMedia: boolean
-export function serializer(object: StyleType) {
-  // object hex hash haved unique key.
+export function serializer(object: ClassesObjectType) {
   const base62Hash = genBase62Hash(object)
-  // coding case transpile.
-  function propConverter(property: string): string {
-    return property
-      .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2')
-      .toLowerCase()
-  }
 
-  // transpile core.
   const stringConverter = (
-    properties: PropertyType,
+    properties: CustomCSSProperties,
     className: string
-  ): ReturnType => {
-    const classSelector: ReturnType = {}
+  ): SerializeType => {
+    const classSelector: SerializeType = {}
     const space = isMedia ? '\n    ' : '\n  '
     let CSSString = ''
 
     for (const property in properties) {
-      const value = properties[property as keyof PropertyType] as PropertyType
+      const value = properties[
+        property as keyof CustomCSSProperties
+      ] as CustomCSSProperties
 
       if (typeof value === 'string' || typeof value === 'number') {
-        const CSSProp = propConverter(property)
+        const CSSProp = camelToKebabCase(property)
         const applyValue = typeof value === 'number' ? value + 'px' : value
 
         CSSString += space + CSSProp + ': ' + applyValue + ';'
@@ -38,7 +31,10 @@ export function serializer(object: StyleType) {
         Object.assign(classSelector, styles)
       } else if (property.startsWith('@media')) {
         isMedia = true
-        const mediaQuery = stringConverter(value as PropertyType, className)
+        const mediaQuery = stringConverter(
+          value as CustomCSSProperties,
+          className
+        )
         const firstMediaQuery = Object.keys(mediaQuery)[0]
         const mediaBlock =
           '\n  ' +
@@ -59,8 +55,9 @@ export function serializer(object: StyleType) {
   const keys = Object.keys(object)
   const lastKey = keys[keys.length - 1]
   for (const property in object) {
-    const lines = property == lastKey ? '\n' : '\n\n'
+    const lines = property == lastKey ? '\n' : '\n\n' // iranai.
     const resultClass = property.replace(/_.*/, '') // under score remove.
+
     const classSelector = stringConverter(
       object[property],
       '.' + resultClass + '_' + base62Hash
