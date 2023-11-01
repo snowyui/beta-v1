@@ -1,2 +1,2 @@
-export { create } from "./create";
-export { mediaQuery } from "./media-query";
+export { Scoped } from './scoped'
+export { mediaQuery } from './media-query'

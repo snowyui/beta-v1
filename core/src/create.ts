@@ -1,7 +1,7 @@
 import type {
-  StyleType,
   ReturnStyleType,
-  ProxyClassName
+  ProxyClassName,
+  ClassesObjectType
 } from '../../_internal/src'
 import {
   serializer,
@@ -12,14 +12,14 @@ import {
 
 import module from './style.module.css'
 
-export function create<T extends StyleType | ProxyClassName>(
+export function create<T extends ClassesObjectType | ProxyClassName>(
   object: T
 ): ReturnStyleType<T> {
-  const { styleSheet, base62Hash } = serializer(object as StyleType)
+  const { styleSheet, base62Hash } = serializer(object as ClassesObjectType)
   if (isUnderDevelopment) insertionCSS(styleSheet)
   if (!isUnderDevelopment) buildIn(styleSheet)
 
-  return new Proxy<ProxyClassName>(object as ProxyClassName, {
+  return new Proxy<ReturnStyleType<T>>(object as ReturnStyleType<T>, {
     get: function (target, prop: string) {
       if (typeof prop === 'string' && prop in target) {
         return isUnderDevelopment
@@ -27,5 +27,5 @@ export function create<T extends StyleType | ProxyClassName>(
           : module[prop + '_' + base62Hash]
       }
     }
-  }) as ReturnStyleType<T>
+  })
 }
