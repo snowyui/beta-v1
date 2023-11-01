@@ -16,7 +16,7 @@ export const TransitionAPI = ({ animates }: AnimationConfig) => {
       e.preventDefault()
       timerId = setTimeout(() => {
         setHasClickDelay(true)
-      }, (times.coming as number) * 1000)
+      }, (times.going as number) * 1000)
     }
 
     const clickHandler = (e: MouseEvent) => {
@@ -44,7 +44,7 @@ export const TransitionAPI = ({ animates }: AnimationConfig) => {
         a.removeEventListener('click', clickHandler)
       })
     }
-  }, [hasClickDelay, times.coming])
+  }, [hasClickDelay, times.going])
 
   useLayoutEffect(() => {
     if (!anchor) return
