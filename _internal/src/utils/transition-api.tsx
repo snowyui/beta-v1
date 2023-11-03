@@ -1,101 +1,87 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useState } from 'react'
-import { AnimationConfig } from 'melt-extract/_internal'
+import { useLayoutEffect, useState, useCallback, useRef } from 'react'
 
-export const TransitionAPI = ({ animates }: AnimationConfig) => {
-  const [hasClickDelay, setHasClickDelay] = useState(false)
-  const [anchor, setAnchor] = useState<HTMLAnchorElement | undefined>(undefined)
-  const { styles, times } = animates || {}
-  /* ---------- delayed--- */
-  useEffect(() => {
-    let timerId: NodeJS.Timeout
-    const handleClick = (e: MouseEvent) => {
-      const targetAnchor = e.target as HTMLAnchorElement
-      setAnchor(targetAnchor)
-      e.preventDefault()
-      timerId = setTimeout(() => {
-        setHasClickDelay(true)
-      }, (times.going as number) * 1000)
-    }
+interface AnimateStyles {
+  base: string
+  exit?: string
+  initial?: string
+  viewing?: string
+  time?: number
+}
 
-    const clickHandler = (e: MouseEvent) => {
-      if (hasClickDelay) return
-      handleClick(e)
-    }
+type animates = {
+  animates: AnimateStyles
+}
 
-    const registeredAnchors = new Set<HTMLAnchorElement>()
+let anchor: HTMLAnchorElement | null
+let cleanupDom: HTMLElement | null
+const useCapture = true
 
-    function bodyClickHandler(event: MouseEvent) {
-      const a = event.target as HTMLAnchorElement
-      if (a.tagName !== 'A') return
-      if (!registeredAnchors.has(a)) {
-        a.addEventListener('click', clickHandler)
-        registeredAnchors.add(a)
+export const TransitionAPI = ({ animates }: animates) => {
+  const ref = useRef(animates)
+  const [hasDelay, setHasDelay] = useState(false)
+  // get a universel client dom elmenet
+  const getClientDom = () => {
+    return document.getElementsByClassName(ref.current.base)[0] as HTMLElement
+  }
+
+  const clickHandler = useCallback(
+    (e: MouseEvent) => {
+      const dom = getClientDom()
+      const target = e.target as HTMLElement
+      const anchorElement = target.closest('a') as HTMLAnchorElement
+      if (anchorElement && window.location.href !== anchorElement.href) {
+        anchor = anchorElement
+        cleanupDom = dom
+        dom.className = ref.current.base + ' ' + ref.current.exit
+        e.preventDefault()
+        setTimeout(() => {
+          setHasDelay(true)
+        }, ((animates.time as number) || 0) * 1000)
       }
-    }
+    },
+    [animates.time]
+  )
 
-    document.body.addEventListener('pointerover', bodyClickHandler, true)
-
-    return () => {
-      clearTimeout(timerId)
-      document.body.removeEventListener('pointerover', bodyClickHandler, true)
-      registeredAnchors.forEach(a => {
-        a.removeEventListener('click', clickHandler)
-      })
-    }
-  }, [hasClickDelay, times.going])
-
-  useLayoutEffect(() => {
-    if (!anchor) return
-
+  const innerEffect = useCallback(() => {
     const clickEvent = new MouseEvent('click', {
       view: window,
       bubbles: true,
       cancelable: true
     })
+    if (!hasDelay) return
+    if (!(anchor instanceof HTMLAnchorElement)) return
     anchor.dispatchEvent(clickEvent)
-    console.log('clicked')
-    return () => {
-      if (hasClickDelay) return
-      setAnchor(undefined)
-      setHasClickDelay(false)
-    }
-  }, [anchor, hasClickDelay])
+    anchor = null
+  }, [hasDelay])
 
-  /* ---------- sync animations--- */
-  // exits unmount has going entrys.
   useLayoutEffect(() => {
-    if (!anchor) return
-    const e = document?.getElementsByClassName(styles.base)[0] as HTMLElement
-    if (!e) return
-    e.style.transitionDuration = times.going + 's'
-    e.className = styles.base + ' ' + styles.going //
+    if (!ref.current.exit) return
+    innerEffect()
+    const cleanup = ref.current.base
 
+    document.body.addEventListener('click', clickHandler, useCapture)
     return () => {
-      e.removeAttribute('style')
-      e.className = styles.base
+      document.body.removeEventListener('click', clickHandler, useCapture)
+      if (!cleanupDom) return
+      cleanupDom.className = cleanup
+      cleanupDom = null
     }
-  }, [anchor, styles.base, styles.going, times.going])
+  }, [clickHandler, innerEffect])
 
-  // initial mount has coming entrys.
   useLayoutEffect(() => {
-    if (anchor) return
-    const e = document?.getElementsByClassName(styles.base)[0] as HTMLElement // get a universel client dom elmenet
-    if (!e) return
-    e.style.transitionDuration = times.coming + 's'
-    e.className = styles.base + ' ' + styles.coming // respawn to base point.
-
-    const toBase = () => {
-      e.className = styles.base
-    }
-    const animateId = requestAnimationFrame(toBase) // if going entry defined.
+    if (!ref.current.initial) return
+    const dom = getClientDom()
+    dom.className = ref.current.base + ' ' + ref.current.initial // respawn to base point and // first cleanup.
+    const animateId = requestAnimationFrame(() => {
+      dom.className = ref.current.base
+    })
 
     return () => {
-      e.removeAttribute('style')
       cancelAnimationFrame(animateId)
     }
-  }, [anchor, styles.base, styles.coming, times.coming])
+  }, [])
 
   return null
 }
