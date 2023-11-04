@@ -27,19 +27,20 @@ const clux = (classes: [string, string, string?], exit?: number) => {
       if (target == null) return
 
       const anchorElement = target.closest('a')
-      if (anchorElement && window.location.href != anchorElement.href) {
-        anchor = anchorElement
-        const classElement = getClientClassElement()
-        if (classElement == null) return
+      if (anchorElement == null) return
+      if (window.location.href === anchorElement.href) return
 
-        classElement.className = ref.current[0] + ' ' + ref.current[2]
-        e.preventDefault()
-        if (typeof exit == 'undefined') return
+      const classElement = getClientClassElement()
+      if (classElement == null) return
+
+      classElement.className = ref.current[0] + ' ' + ref.current[2]
+      e.preventDefault()
+      if (typeof exit != 'undefined')
         setTimeout(() => {
           setHasDelay(true)
         }, exit * 1000)
-        cleanupDom = classElement
-      }
+      anchor = anchorElement
+      cleanupDom = classElement
     },
     [exit, getClientClassElement]
   )
