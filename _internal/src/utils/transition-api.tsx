@@ -21,27 +21,40 @@ const useCapture = true
 export const TransitionAPI = ({ animates }: animates) => {
   const ref = useRef(animates)
   const [hasDelay, setHasDelay] = useState(false)
-  // get a universel client dom elmenet
-  const getClientDom = () => {
-    return document.getElementsByClassName(ref.current.base)[0] as HTMLElement
+
+  const getClientClassElement = useCallback(() => {
+    const oneClassElement = document.getElementsByClassName(ref.current.base)[0]
+    if (oneClassElement instanceof HTMLElement) return oneClassElement
+    else return null
+  }, [])
+
+  const eventTargetHTMLElement = (e: MouseEvent) => {
+    const clickTarget = e.target
+    if (clickTarget instanceof HTMLElement) return clickTarget
+    else return null
   }
 
   const clickHandler = useCallback(
     (e: MouseEvent) => {
-      const dom = getClientDom()
-      const target = e.target as HTMLElement
+      const target = eventTargetHTMLElement(e)
+      if (target == null) return
+
       const anchorElement = target.closest('a') as HTMLAnchorElement
       if (anchorElement && window.location.href !== anchorElement.href) {
         anchor = anchorElement
-        cleanupDom = dom
-        dom.className = ref.current.base + ' ' + ref.current.exit
+        const classElement = getClientClassElement()
+        if (classElement == null) return
+
+        classElement.className = ref.current.base + ' ' + ref.current.exit
         e.preventDefault()
+        if (typeof animates.time == 'undefined') return
         setTimeout(() => {
           setHasDelay(true)
-        }, ((animates.time as number) || 0) * 1000)
+        }, animates.time * 1000)
+        cleanupDom = classElement
       }
     },
-    [animates.time]
+    [animates.time, getClientClassElement]
   )
 
   const innerEffect = useCallback(() => {
@@ -51,17 +64,17 @@ export const TransitionAPI = ({ animates }: animates) => {
       cancelable: true
     })
     if (!hasDelay) return
-    if (!(anchor instanceof HTMLAnchorElement)) return
+    if (anchor == null) return
+
     anchor.dispatchEvent(clickEvent)
     anchor = null
   }, [hasDelay])
 
   useLayoutEffect(() => {
-    if (!ref.current.exit) return
     innerEffect()
     const cleanup = ref.current.base
-
     document.body.addEventListener('click', clickHandler, useCapture)
+
     return () => {
       document.body.removeEventListener('click', clickHandler, useCapture)
       if (!cleanupDom) return
@@ -71,17 +84,18 @@ export const TransitionAPI = ({ animates }: animates) => {
   }, [clickHandler, innerEffect])
 
   useLayoutEffect(() => {
-    if (!ref.current.initial) return
-    const dom = getClientDom()
-    dom.className = ref.current.base + ' ' + ref.current.initial // respawn to base point and // first cleanup.
+    const classElement = getClientClassElement()
+    if (classElement == null) return
+
+    classElement.className = ref.current.base + ' ' + ref.current.initial // respawn to base point.
     const animateId = requestAnimationFrame(() => {
-      dom.className = ref.current.base
+      classElement.className = ref.current.base
     })
 
     return () => {
       cancelAnimationFrame(animateId)
     }
-  }, [])
+  }, [getClientClassElement])
 
   return null
 }
