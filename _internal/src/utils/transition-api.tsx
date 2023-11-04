@@ -39,20 +39,21 @@ export const TransitionAPI = ({ animates }: animates) => {
       const target = eventTargetHTMLElement(e)
       if (target == null) return
 
-      const anchorElement = target.closest('a') as HTMLAnchorElement
-      if (anchorElement && window.location.href !== anchorElement.href) {
-        anchor = anchorElement
-        const classElement = getClientClassElement()
-        if (classElement == null) return
+      const anchorElement = target.closest('a')
+      if (anchorElement == null) return
+      if (window.location.href === anchorElement.href) return
 
-        classElement.className = ref.current.base + ' ' + ref.current.exit
-        e.preventDefault()
-        if (typeof animates.time == 'undefined') return
+      const classElement = getClientClassElement()
+      if (classElement == null) return
+
+      classElement.className = ref.current.base + ' ' + ref.current.exit
+      e.preventDefault()
+      if (typeof animates.time != 'undefined')
         setTimeout(() => {
           setHasDelay(true)
         }, animates.time * 1000)
-        cleanupDom = classElement
-      }
+      anchor = anchorElement
+      cleanupDom = classElement
     },
     [animates.time, getClientClassElement]
   )
