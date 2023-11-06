@@ -1,5 +1,7 @@
 import path from 'path'
 
+export const isWindowDefined = typeof window !== 'undefined'
+export const isDocumentDefined = typeof document !== 'undefined'
 export const isUnderDevelopment = process.env.NODE_ENV !== 'development'
 
 const dir = (direname: string, relativePath: string) => {
