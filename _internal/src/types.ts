@@ -56,7 +56,7 @@ export interface CustomCSSProperties extends CSSProperties {
 export type SerializeType = Record<string, string>
 
 // ------------------------------- nested string key in property ----------------------//
-export type ClassesObjectType = Record<string, CustomCSSProperties>
+export type ClassesObjectType = Record<string, PropertiesType>
 // ------------------------------- nested return type ---------------------------------//
 export type ReturnStyleType<T> = { [key in keyof T]: string }
 export type ProxyClassName = { [key: string]: string }
@@ -77,10 +77,7 @@ export interface PropertiesType extends CSSProperties {
   after?: CustomCSSProperties
 }
 
-export type NonNestObjectType = Record<
-  string,
-  (CSSNumericValue | CSSPropertiesValues) & string
->
+export type NonNestObjectType = Record<string, CustomCSSProperties & string>
 
 export interface AnimationConfig {
   animates: {
