@@ -1,12 +1,17 @@
 import { genBase62Hash, pseudo, isUnderDevelopment, camelToKebabCase } from '..'
-import type { CustomCSSProperties, SerializeType, ClassesObjectType } from '..'
+import type {
+  PropertiesType,
+  CustomCSSProperties,
+  SerializeType,
+  ClassesObjectType
+} from '..'
 
 let isMedia: boolean
 export function serializer(object: ClassesObjectType) {
   const base62Hash = genBase62Hash(object)
 
   const stringConverter = (
-    properties: CustomCSSProperties,
+    properties: PropertiesType,
     className: string
   ): SerializeType => {
     const classSelector: SerializeType = {}
@@ -16,7 +21,7 @@ export function serializer(object: ClassesObjectType) {
     for (const property in properties) {
       const value = properties[
         property as keyof CustomCSSProperties
-      ] as CustomCSSProperties
+      ] as PropertiesType
 
       if (typeof value === 'string' || typeof value === 'number') {
         const CSSProp = camelToKebabCase(property)
