@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import type { CSSColorNames } from './colors'
 
 // -------------------------- defined string Integer unit --//
 type CSSUnit =
@@ -18,14 +19,33 @@ type CSSUnit =
   | 'ex'
   | 'ch'
 export type CSSNumericValue = '0' | `${number}${CSSUnit}`
+
 type CSSPropertiesValues =
   | CSSNumericValue
   | `${CSSNumericValue} ${CSSNumericValue}`
   | `${CSSNumericValue} ${CSSNumericValue} ${CSSNumericValue}`
   | `${CSSNumericValue} ${CSSNumericValue} ${CSSNumericValue} ${CSSNumericValue}`
 
+type ExtractPercent<T> = T extends '%' ? '%' : never
+type RemovePercent<T> = T extends '%' ? never : T
+type PercentUnit = '0' | `${number}${ExtractPercent<CSSUnit>}`
+type LengthUnit = '0' | `${number}${RemovePercent<CSSUnit>}`
+
+type CSSFilterFunction =
+  | `blur(${LengthUnit})`
+  | `brightness(${PercentUnit})`
+  | `contrast(${PercentUnit})`
+  | `drop-shadow(${LengthUnit} ${LengthUnit} ${LengthUnit} ${string})`
+  | `grayscale(${PercentUnit})`
+  | `hue-rotate(${number}deg)`
+  | `invert(${PercentUnit})`
+  | `opacity(${PercentUnit})`
+  | `sepia(${PercentUnit})`
+  | `saturate(${PercentUnit})`
+  | 'none'
+
 // ------------------------------- string Integer units type -//
-export interface CustomCSSProperties extends CSSProperties {
+export interface CustomCSSProperties {
   width?: CSSNumericValue
   height?: CSSNumericValue
   margin?: CSSPropertiesValues
@@ -49,6 +69,11 @@ export interface CustomCSSProperties extends CSSProperties {
   gridGap?: CSSNumericValue
   gridColumnGap?: CSSNumericValue
   gridRowGap?: CSSNumericValue
+  color?: CSSColorNames
+  background?: CSSColorNames
+  backgroundColor?: CSSColorNames
+  filter?: CSSFilterFunction
+  backdropFilter?: CSSFilterFunction
 }
 
 // ------------------------------- build and insert ----------//
@@ -56,7 +81,11 @@ export interface CustomCSSProperties extends CSSProperties {
 export type SerializeType = Record<string, string>
 
 // ------------------------------- nested string key in property ----------------------//
-export type ClassesObjectType = Record<string, PropertiesType>
+export type aClassesObjectType = Record<string, CustomCSSProperties> // ネストを表現しにくいから消す
+export type ClassesObjectType = {
+  [className in string]: CustomCSSProperties
+}
+
 // ------------------------------- nested return type ---------------------------------//
 export type ReturnStyleType<T> = { [key in keyof T]: string }
 export type ProxyClassName = { [key: string]: string }
