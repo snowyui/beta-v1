@@ -5,15 +5,15 @@ import type {
   NonNestObjectType
 } from '../../_internal/src'
 import { create } from './create'
-import { styling } from './style'
+import { style } from './style'
 
 export class Scoped {
-  static classes<T extends ClassesObjectType | ProxyClassName>(
+  static create<T extends ClassesObjectType | ProxyClassName>(
     object: T
   ): ReturnStyleType<T> {
     return create(object)
   }
   static style<T extends NonNestObjectType>(object: T): string {
-    return styling(object)
+    return style(object)
   }
 }
