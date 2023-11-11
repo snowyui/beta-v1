@@ -1,9 +1,11 @@
-type NumberOrPercent = number | `${number}%`;
+type NumberOrPercent = number | `${number}%`
 
-type CSSRGB = `rgb(${number},${number},${number})` | `rgb(${number} ${number} ${number})`;
+type CSSRGB =
+  | `rgb(${number},${number},${number})`
+  | `rgb(${number} ${number} ${number})`
 type CSSRGBA =
   | `rgba(${number},${number},${number},${NumberOrPercent})`
-  | `rgba(${number} ${number} ${number} / ${NumberOrPercent})`;
+  | `rgba(${number} ${number} ${number} / ${NumberOrPercent})`
 
 export type CSSColorNames =
   | CSSRGBA
@@ -156,4 +158,4 @@ export type CSSColorNames =
   | 'white'
   | 'whitesmoke'
   | 'yellow'
-  | 'yellowgreen';
+  | 'yellowgreen'
