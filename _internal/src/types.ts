@@ -74,24 +74,7 @@ export interface CustomCSSProperties {
   backgroundColor?: CSSColorNames
   filter?: CSSFilterFunction
   backdropFilter?: CSSFilterFunction
-}
 
-// ------------------------------- build and insert ----------//
-// ------------------------------- all strings ---------------//
-export type SerializeType = Record<string, string>
-
-// ------------------------------- nested string key in property ----------------------//
-export type aClassesObjectType = Record<string, CustomCSSProperties> // ネストを表現しにくいから消す
-export type ClassesObjectType = {
-  [className in string]: CustomCSSProperties
-}
-
-// ------------------------------- nested return type ---------------------------------//
-export type ReturnStyleType<T> = { [key in keyof T]: string }
-export type ProxyClassName = { [key: string]: string }
-
-// ------------------------------- direct key and value property ----------------------//
-export interface PropertiesType extends CSSProperties {
   link?: CustomCSSProperties
   visited?: CustomCSSProperties
   hover?: CustomCSSProperties
@@ -106,7 +89,21 @@ export interface PropertiesType extends CSSProperties {
   after?: CustomCSSProperties
 }
 
-export type NonNestObjectType = Record<string, CustomCSSProperties & string>
+// ------------------------------- build and insert ----------//
+// ------------------------------- all strings ---------------//
+export type SerializeType = Record<string, string>
+
+// ------------------------------- nested string key in property ----------------------//
+export type aClassesObjectType = Record<string, CustomCSSProperties> // ネストを表現しにくいから消す
+export type ClassesObjectType = {
+  [className in string]: CustomCSSProperties
+}
+
+// ------------------------------- nested return type ---------------------------------//
+export type ReturnStyleType<T> = { [key in keyof T]: string }
+export type ProxyClassName = Record<string, string>
+
+export type NonNestObjectType = CustomCSSProperties
 
 export interface AnimationConfig {
   animates: {
