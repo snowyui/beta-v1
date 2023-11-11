@@ -1,13 +1,13 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 
 let anchor: HTMLAnchorElement | null
-let firstmount = false
+let cleanupDom: HTMLElement | null
+
 const useCapture = true
 
-const clux = (classes: [string, string, string?], exit?: number) => {
+const reflect = (classes: [string, string, string?], exit?: number) => {
   const ref = useRef(classes)
   const [hasDelay, setHasDelay] = useState(false)
-  const [state, setState] = useState('')
 
   const getClientClassElement = useCallback(() => {
     const oneClassElement = document.getElementsByClassName(ref.current[0])[0]
@@ -33,13 +33,14 @@ const clux = (classes: [string, string, string?], exit?: number) => {
       const classElement = getClientClassElement()
       if (classElement == null) return
 
-      setState(ref.current[0] + ' ' + ref.current[2])
+      classElement.className = ref.current[0] + ' ' + ref.current[2]
       e.preventDefault()
       if (typeof exit != 'undefined')
         setTimeout(() => {
           setHasDelay(true)
         }, exit * 1000)
       anchor = anchorElement
+      cleanupDom = classElement
     },
     [exit, getClientClassElement]
   )
@@ -57,29 +58,35 @@ const clux = (classes: [string, string, string?], exit?: number) => {
     anchor = null
   }, [hasDelay])
 
-  // ---------- Entrypoint Effect//
   // ---------- Exits styles. entry the class third of array //
   useLayoutEffect(() => {
     innerEffect()
+    const cleanup = ref.current[0]
     document.body.addEventListener('click', clickHandler, useCapture)
 
     return () => {
       document.body.removeEventListener('click', clickHandler, useCapture)
+      if (cleanupDom == null) return
+      cleanupDom.className = cleanup
+      cleanupDom = null
     }
   }, [clickHandler, innerEffect])
 
   // ---------- Initial styles. entry the class second of array //
   useLayoutEffect(() => {
-    if (firstmount) setState(ref.current[0] + ' ' + ref.current[1])
+    const classElement = getClientClassElement()
+    if (classElement == null) return
 
-    firstmount = true
-    const cleanup = ref.current[0]
+    classElement.className = ref.current[0] + ' ' + ref.current[1] // respawn to base point.
+    const animateId = requestAnimationFrame(() => {
+      classElement.className = ref.current[0]
+    })
 
     return () => {
-      setState(cleanup)
+      cancelAnimationFrame(animateId)
     }
-  }, [])
+  }, [getClientClassElement])
 
-  return state !== '' ? state : ref.current[0]
+  return ref.current[0]
 }
-export default clux
+export default reflect
