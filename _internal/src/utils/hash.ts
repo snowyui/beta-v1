@@ -1,4 +1,4 @@
-import { ClassesObjectType } from '../types'
+import { NonNestObjectType, ClassesObjectType } from '../types'
 import crypto from 'crypto'
 
 const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -21,10 +21,13 @@ function encodeBase62(buffer: Uint8Array): string {
   return result
 }
 
-export function genBase62Hash(object: ClassesObjectType) {
+export function genBase62Hash(
+  object: ClassesObjectType | NonNestObjectType,
+  n: number
+) {
   const serialized = JSON.stringify(object)
   const hashBuffer = crypto.createHash('sha256').update(serialized).digest()
   const base62Hash = encodeBase62(hashBuffer)
 
-  return base62Hash.slice(0, 5)
+  return base62Hash.slice(0, n)
 }
