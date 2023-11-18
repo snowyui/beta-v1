@@ -105,6 +105,10 @@ export type ProxyClassName = Record<string, string>
 
 export type NonNestObjectType = CustomCSSProperties
 
+export type RootType = {
+  [key: string]: string
+}
+
 export interface AnimationConfig {
   animates: {
     styles: {
