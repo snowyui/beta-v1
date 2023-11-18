@@ -4,14 +4,14 @@ import type {
   ProxyClassName,
   NonNestObjectType
 } from '../../_internal/src'
-import { create } from './create'
+import { sheet } from './sheet'
 import { style } from './style'
 
 export class Scoped {
-  static create<T extends ClassesObjectType | ProxyClassName>(
+  static sheet<T extends ClassesObjectType | ProxyClassName>(
     object: T
   ): ReturnStyleType<T> {
-    return create(object)
+    return sheet(object)
   }
   static style<T extends NonNestObjectType>(object: T): string {
     return style(object)
