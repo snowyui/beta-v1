@@ -1,10 +1,12 @@
+'use server'
+
 import { createWriteStream, readFile } from 'fs'
-import { isUnderDevelopment, get } from '../'
+import { isInDevelopment, get } from '../'
 
 export const buildIn = (styleSheet: string) => {
   const filePath = get.dir(__dirname, '../../core/src/style.module.css')
 
-  if (isUnderDevelopment)
+  if (isInDevelopment)
     readFile(filePath, 'utf-8', (error, data) => {
       if (error || data.includes(styleSheet)) {
         return
