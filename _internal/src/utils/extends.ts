@@ -1,18 +1,28 @@
 const classes = [
+  'active',
+  'hover',
   'link',
   'visited',
-  'hover',
-  'active',
+  'lang',
+  'empty',
+  'not',
   'firstChild',
-  'lastChild'
+  'lastChild',
+  'firstOfType',
+  'lastOfType',
+  'nthChild',
+  'nthLastChild',
+  'nthOfType',
+  'onlyOfType',
+  'onlyChild'
 ]
 const elements = [
-  'firstLine',
-  'firstLetter',
-  'lastLine',
-  'lastLetter',
+  'after',
   'before',
-  'after'
+  'firstLetter',
+  'firstLine',
+  'marker',
+  'selection'
 ]
 export const pseudo = {
   classes,
