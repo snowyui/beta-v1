@@ -14,7 +14,20 @@ const classes = [
   'nthLastChild',
   'nthOfType',
   'onlyOfType',
-  'onlyChild'
+  'onlyChild',
+  'checked',
+  'disabled',
+  'enabled',
+  'focus',
+  'inRange',
+  'invalid',
+  'valid',
+  'optional',
+  'outOfRange',
+  'readOnly',
+  'readWrite',
+  'required',
+  'target'
 ]
 const elements = [
   'after',
