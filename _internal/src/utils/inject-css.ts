@@ -5,10 +5,11 @@ const styleSheets: Record<string, HTMLStyleElement> = {}
 const hashCache: Record<string, string> = {}
 
 function createStyleElement(hash: string): HTMLStyleElement | null {
-  if (document.getElementById(hash)) return null
+  const hashId = (hash.match(/_.*$/) || '')[0]
+  if (document.getElementById(hashId)) return null
 
   const styleElement = document.createElement('style')
-  styleElement.setAttribute('id', hash)
+  styleElement.setAttribute('id', hashId)
   styleElement.setAttribute('type', 'text/css')
   styleSheets[hash] = styleElement
   document.head.appendChild(styleElement)
