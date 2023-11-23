@@ -72,7 +72,7 @@ type CSSRadiusValues =
   | CSSRadiusPercentageValues
   | CSSVariableValue
 
-export interface CustomExtendProperties {
+export type CustomExtendProperties = {
   width?: CSSNumericValue
   height?: CSSNumericValue
   margin?: CSSEdgeSizeValues
@@ -107,19 +107,49 @@ export interface CustomExtendProperties {
   color?: CSSColorValue
   background?: CSSColorValue
   backgroundColor?: CSSColorValue
+  active?: CustomCSSProperties
+  hover?: CustomCSSProperties
   link?: CustomCSSProperties
   visited?: CustomCSSProperties
-  hover?: CustomCSSProperties
-  active?: CustomCSSProperties
+  lang?: undefined
+  [key: GenericsArguments<'lang', string>]: CustomCSSProperties
+  empty?: CustomCSSProperties
+  not?: undefined
+  [key: GenericsArguments<'not', string>]: CustomCSSProperties
   firstChild?: CustomCSSProperties
   lastChild?: CustomCSSProperties
-  firstLine?: CustomCSSProperties
-  lastLine?: CustomCSSProperties
-  firstLetter?: CustomCSSProperties
-  lastLetter?: CustomCSSProperties
-  before?: CustomCSSProperties
+  nthChild?: undefined
+  nthLastChild?: undefined
+  nthLastOftType?: undefined
+  nthOfType?: undefined
+  [key: GenericsArguments<Nth, string | number>]: CustomCSSProperties
+  checked?: CustomCSSProperties
+  disabled?: CustomCSSProperties
+  enabled?: CustomCSSProperties
+  focus?: CustomCSSProperties
+  inRange?: CustomCSSProperties
+  invalid?: CustomCSSProperties
+  valid?: CustomCSSProperties
+  optional?: CustomCSSProperties
+  outOfRange?: CustomCSSProperties
+  readOnly?: CustomCSSProperties
+  readWrite?: CustomCSSProperties
+  required?: CustomCSSProperties
+  target?: CustomCSSProperties
   after?: CustomCSSProperties
+  before?: CustomCSSProperties
+  firstLetter?: CustomCSSProperties
+  firstLine?: CustomCSSProperties
+  marker?: CustomCSSProperties
+  selection?: CustomCSSProperties
+  [key: CSSVariableKey]: string
 }
+
+type GenericsArguments<
+  T extends string,
+  K extends string | number
+> = `${T}_${K}`
+type Nth = 'nthChild' | 'nthLastChild' | 'nthLastOftType' | 'nthOfType'
 
 type CSSVariableKey = `--${string}-${string}`
 type CSSVariableValue = `var(${CSSVariableKey})`
@@ -137,14 +167,10 @@ export type ReturnStyleType<T> = { [key in keyof T]: string }
 
 export type NonNestObjectType = CustomCSSProperties
 
-type HTMLType = keyof JSX.IntrinsicElements
+type ReactJSXType = keyof JSX.IntrinsicElements
 
-export type RootType = {
-  [K in CSSVariableKey]: string
-}
-
-export type CoreType = {
-  [K in HTMLType]?: CustomCSSProperties
+export type HTMLType = {
+  [K in ReactJSXType]?: CustomCSSProperties
 }
 
 export type SerializeType = Record<string, string>
