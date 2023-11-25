@@ -5,11 +5,10 @@ const styleSheets: Record<string, HTMLStyleElement> = {}
 const hashCache: Record<string, string> = {}
 
 function createStyleElement(hash: string): HTMLStyleElement | null {
-  const hashId = (hash.match(/_.*$/) || '')[0]
-  if (document.getElementById(hashId)) return null
+  if (document.getElementById(hash)) return null
 
   const styleElement = document.createElement('style')
-  styleElement.setAttribute('id', hashId)
+  styleElement.setAttribute('id', hash)
   styleElement.setAttribute('type', 'text/css')
   styleSheets[hash] = styleElement
   document.head.appendChild(styleElement)
@@ -25,7 +24,10 @@ export function injectCSS(hash: string, sheet: string) {
   const styleElement = createStyleElement(hash)
   if (styleElement == null) return
 
-  styleElement.textContent = sheet
+  const hasClassName = /[^_]/.test(hash)
+  const classSheet = (sheet.match(`\\.${hash}\\s*{[^}]+}`) || '')[0]
+  const selector = hasClassName ? classSheet : sheet
+  styleElement.textContent = selector
 }
 
 function styleCleanUp() {
