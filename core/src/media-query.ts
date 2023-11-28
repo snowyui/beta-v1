@@ -1,13 +1,21 @@
-import type { CustomCSSProperties } from '../../_internal/src'
+import type { NonNestObjectType, ClassesObjectType } from '../../_internal/src'
 
-export const mediaQuery = (query: string, secondQuery?: string) => {
-  if (secondQuery) {
-    return function (target: CustomCSSProperties): CustomCSSProperties {
-      return { ['@media (' + query + ') and (' + secondQuery + ')']: target }
+export const media = (query: string, secondary?: string) => {
+  if (secondary) {
+    return (
+      target: NonNestObjectType
+    ): NonNestObjectType | ClassesObjectType => {
+      const result = {
+        ['@media (' + query + ') and (' + secondary + ')']: target
+      }
+      return result
     }
   } else {
-    return function (target: CustomCSSProperties): CustomCSSProperties {
-      return { ['@media (' + query + ')']: target }
+    return (
+      target: NonNestObjectType
+    ): NonNestObjectType | ClassesObjectType => {
+      const result = { ['@media (' + query + ')']: target }
+      return result
     }
   }
 }
