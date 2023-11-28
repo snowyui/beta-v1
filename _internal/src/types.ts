@@ -155,9 +155,13 @@ type CSSVariableKey = `--${string}-${string}`
 type CSSVariableValue = `var(${CSSVariableKey})`
 type CSSColorValue = CSSColorNames | CSSVariableValue
 
-export type CustomCSSProperties = CustomExtendProperties & {
-  [K in keyof React.CSSProperties]: React.CSSProperties[K] | CSSVariableValue
-}
+export type CustomCSSProperties =
+  | (CustomExtendProperties & {
+      [K in keyof React.CSSProperties]:
+        | React.CSSProperties[K]
+        | CSSVariableValue
+    })
+  | ClassesObjectType
 
 export type ClassesObjectType = {
   [className in string]: CustomCSSProperties
@@ -167,10 +171,10 @@ export type ReturnStyleType<T> = { [key in keyof T]: string }
 
 export type NonNestObjectType = CustomCSSProperties
 
-type ReactJSXType = keyof JSX.IntrinsicElements
+type JSXType = keyof JSX.IntrinsicElements
 
 export type HTMLType = {
-  [K in ReactJSXType]?: CustomCSSProperties
+  [K in JSXType]?: CustomCSSProperties
 }
 
 export type SerializeType = Record<string, string>
